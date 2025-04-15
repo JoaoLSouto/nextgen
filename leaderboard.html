@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="gamificationApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Leaderboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f1e3c;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .leaderboard-container {
+      width: 90%;
+      max-width: 320px;
+      background-color: #13294b;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    ol {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      background-color: #1e3557;
+      border-radius: 16px;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background-color: #35a6e6;
+      object-fit: cover;
+      margin-right: 12px;
+    }
+
+    .player-name {
+      font-size: 16px;
+      font-weight: bold;
+      flex: 1;
+    }
+
+    .player-points {
+      font-size: 15px;
+      font-weight: bold;
+      color: #35c6f3; /* pode variar conforme pontuação */
+    }
+
+    .player-points.orange {
+      color: #fbb03b;
+    }
+
+    .player-rank {
+      font-size: 16px;
+      font-weight: bold;
+      margin-left: 12px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 16px;
+      font-weight: bold;
+      background-color: #f77e2e;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body ng-controller="LeaderboardController">
+  <div class="leaderboard-container">
+    <h2>Leaderboard</h2>
+    <ol>
+      <li ng-repeat="player in leaderboard track by $index">
+        <img class="avatar" ng-src="{{player.avatar}}" alt="{{player.name}} Avatar">
+        <span class="player-name">{{player.name}}</span>
+        <span class="player-points" ng-class="{'orange': player.name === 'John'}">{{player.points}}</span>
+        <span class="player-rank">{{$index + 1}}</span>
+      </li>
+    </ol>
+    <button onclick="goTo('login')">Back to Login</button>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="app.js"></script>
+  <script src="prototype_navigation.js"></script>
+</body>
+</html>
