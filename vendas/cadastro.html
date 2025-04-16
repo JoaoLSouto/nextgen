@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="gamificationApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f1e3c;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: white;
+    }
+
+    .signup-card {
+      background-color: #13294b;
+      border-radius: 24px;
+      padding: 24px;
+      width: 90%;
+      max-width: 360px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .signup-card h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #fbb03b;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: none;
+      border-radius: 10px;
+      background-color: #1e3557;
+      color: white;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #f77e2e;
+      border: none;
+      border-radius: 14px;
+      font-weight: bold;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .success-message, .error-message {
+      text-align: center;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+
+    .success-message {
+      color: #00ffb2;
+    }
+
+    .error-message {
+      color: #ff5e5e;
+    }
+  </style>
+
+  <script>
+    var app = angular.module('gamificationApp', []);
+
+    app.controller('SignupController', function($scope, $http) {
+      $scope.user = {
+        name: '',
+        email: '',
+        country: '',
+        company: '',
+        sports: ['soccer', '', '']
+      };
+
+      $scope.successMessage = '';
+      $scope.errorMessage = '';
+
+      $scope.register = function () {
+        const req = {
+          method: 'POST',
+          url: 'https://service2.funifier.com/v3/player',
+          headers: {
+            "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsImNhbGciOiJHWklQIn0.H4sIAAAAAAAAAD2LwQoCIRQAfyXe2UOuPl26B0HHPiBe-gRBUtStlujfk4K9DcPMG6jEM69wAGMDo7f7SU02WB0UKbTKGRDQXC48ksrkr5SS2D1r7PxHz4k3pk43ajweci4v9z6u42U9uUcdbmlcN5GHiDQCabWepUKDAvhVfgK1nJXBzxcv631foAAAAA.ENx_XtbRCPK3e4HZiGzFAJQ0aJei_rAcUAPjpLX6hNhNMRYXBe2syg7EAhJ2-kuyoauD9c__ek2E2bh6WzDl0A",
+            "Content-Type": "application/json"
+          },
+          data: {
+            _id: '',
+            name: $scope.user.name,
+            email: $scope.user.email,
+            image: {
+              small: { url: "https://my.funifier.com/images/funny.png" },
+              medium: { url: "https://my.funifier.com/images/funny.png" },
+              original: { url: "https://my.funifier.com/images/funny.png" }
+            },
+            teams: [""],
+            friends: [""],
+            extra: {
+              country: $scope.user.country,
+              company: $scope.user.company,
+              sports: $scope.user.sports
+            }
+          }
+        };
+
+        $http(req).then(
+          function (response) {
+            console.log("Cadastro realizado:", response.data);
+            $scope.successMessage = "✅ Cadastro realizado com sucesso!";
+            $scope.errorMessage = '';
+          },
+          function (error) {
+            console.error("Erro no cadastro:", error);
+            $scope.errorMessage = "❌ Erro ao cadastrar. Tente novamente.";
+            $scope.successMessage = '';
+          }
+        );
+      };
+    });
+  </script>
+</head>
+<body ng-controller="SignupController">
+  <div class="signup-card">
+    <h2>Cadastre-se</h2>
+    <input type="text" ng-model="user.name" placeholder="Nome completo" required>
+    <input type="email" ng-model="user.email" placeholder="Email" required>
+    <input type="text" ng-model="user.country" placeholder="País">
+    <input type="text" ng-model="user.company" placeholder="Empresa">
+    <button ng-click="register()">Cadastrar</button>
+    <p class="success-message" ng-if="successMessage">{{successMessage}}</p>
+    <p class="error-message" ng-if="errorMessage">{{errorMessage}}</p>
+  </div>
+</body>
+</html>

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="gamificationApp">
 <head>
   <meta charset="UTF-8">
   <title>Gamification App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -31,9 +32,12 @@
 
     .login-header {
       height: 180px;
-      background-image: url('images/header_car.png'); /* Altere para o caminho da sua imagem */
+      background-image: url('header_car.png');
       background-size: cover;
       background-position: center;
+      border-bottom: 4px solid #0f1e3c;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
     }
 
     .login-content {
@@ -81,36 +85,55 @@
       color: #b0c9e7;
       text-decoration: underline;
     }
-
-    @media (max-height: 600px) {
-      .login-header {
-        height: 140px;
-      }
-    }
-    .login-header {
-  height: 180px;
-  background-image: url('header_car.png'); /* Caminho da imagem */
-  background-size: cover;
-  background-position: center;
-  border-bottom: 4px solid #0f1e3c; /* opcional, para dar mais destaque */
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
-}
   </style>
+
   <script>
-    function loginRedirect() {
-      window.location.href = 'login.html';
-    }
+    var app = angular.module('gamificationApp', []);
+
+    app.controller('LoginController', function ($scope, $http) {
+      $scope.email = '';
+      $scope.password = '';
+
+      $scope.login = function () {
+        const req = {
+          method: 'GET',
+          url: 'https://service2.funifier.com/v3/player',
+          headers: {
+            "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsImNhbGciOiJHWklQIn0.H4sIAAAAAAAAAD2LwQpCIRBFfyVm7aKnjkb7IGjZB8SkIwiSor7qEf17VvA2l8Ph3BdQiSdeYA_GBkZvt1JJG6wOihRa5QwIaC4XHkll8hdKSWweNXb-o-fEK1OnKzUeH3Iuz7c-XofzcnT3OtzcuK4iDxFpBJPVejdJgyiAn-UnUH8H3x_3USOBoAAAAA.dUPw58OjZeGyDZ7AER9Bx0Vp09aCjhC1QyFMiP9m0gumazJSAWpWG8oz0UB98Jl9b_phqvINjKggsTMTnJUXkw",
+            "Content-Type": "application/json"
+          }
+        };
+
+        $http(req).then(
+          function (response) {
+            const players = response.data || [];
+            const found = players.find(p => (p.email || '').toLowerCase() === $scope.email.toLowerCase());
+
+            if (found) {
+              alert("✅ Login realizado com sucesso!");
+              // Redirecionar ou salvar dados aqui se quiser
+              console.log("Usuário encontrado:", found);
+            } else {
+              alert("❌ Usuário não encontrado.");
+            }
+          },
+          function (error) {
+            console.error('Erro ao consultar jogadores:', error);
+            alert("Erro ao buscar jogadores.");
+          }
+        );
+      };
+    });
   </script>
 </head>
-<body>
+<body ng-controller="LoginController">
   <div class="login-card">
     <div class="login-header"></div>
     <div class="login-content">
       <h1>LOG IN</h1>
-      <input type="email" placeholder="Email">
-      <input type="password" placeholder="Password">
-      <button onclick="loginRedirect()">LOG IN</button>
+      <input type="email" ng-model="email" placeholder="Email">
+      <input type="password" ng-model="password" placeholder="Password">
+      <button ng-click="login()">LOG IN</button>
       <p>Don’t have an account? <a href="#">Sign up</a></p>
     </div>
   </div>
