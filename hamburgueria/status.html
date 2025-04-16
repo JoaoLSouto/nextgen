@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="gamificationApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Player Stats</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #ffa94d;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .stats-container {
+      width: 90%;
+      max-width: 360px;
+      background-color: #d1580f;
+      border-radius: 28px;
+      padding: 32px 24px;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+
+    .back-arrow {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid #fff;
+      margin: 20px auto 16px;
+    }
+
+    .player-name {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .points {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .points img {
+      width: 24px;
+      height: 24px;
+    }
+
+    .level-label {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      background-color: #f9b66b;
+      border-radius: 12px;
+      overflow: hidden;
+      height: 16px;
+      margin-bottom: 20px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: #a44200;
+      width: 60%; /* você pode substituir por {{player.progress}}% */
+    }
+
+    .bottom-image {
+      margin-top: 20px;
+      width: 120px;
+    }
+  </style>
+</head>
+<body ng-controller="StatsController">
+  <div class="stats-container">
+    <div class="back-arrow" onclick="goTo('leaderboard')">&#8592;</div>
+
+    <img class="avatar" ng-src="{{player.avatar}}" alt="{{player.name}}">
+    <div class="player-name">{{player.name}}</div>
+
+    <div class="points">
+      <img src="burger_icon.png" alt="burger icon">
+      {{player.points}}
+    </div>
+
+    <div class="level-label">Level {{player.level}}</div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: {{player.progress}}%"></div>
+    </div>
+
+    <img src="burger_progress.png" class="bottom-image" alt="progress burger">
+  </div>
+
+  <script>
+    angular.module('gamificationApp', [])
+      .controller('StatsController', function($scope) {
+        $scope.player = {
+          name: "David",
+          points: 1250,
+          level: 5,
+          progress: 60,
+          avatar: "david.png" // substitua pela imagem real
+        };
+      });
+
+    function goTo(page) {
+      window.location.href = page + ".html";
+    }
+  </script>
+</body>
+</html>

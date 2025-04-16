@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="gamificationApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Challenges</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #ffa94d;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: white;
+    }
+
+    .challenges-container {
+      width: 90%;
+      max-width: 360px;
+      background-color: #d1580f;
+      border-radius: 28px;
+      padding: 32px 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 24px;
+      color: #fff;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      background-color: #ff9b42;
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .icon {
+      width: 50px;
+      height: 50px;
+      margin-right: 16px;
+    }
+
+    .challenge-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .challenge-name {
+      font-size: 16px;
+      font-weight: bold;
+      color: #5c1d00;
+    }
+
+    .challenge-points {
+      font-size: 14px;
+      color: #fff;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      background-color: #ff851b;
+      border: none;
+      border-radius: 14px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body ng-controller="ChallengesController">
+  <div class="challenges-container">
+    <h2>Challenges</h2>
+    <ul>
+      <li ng-repeat="challenge in challenges">
+        <img class="icon" ng-src="{{challenge.icon}}" alt="Challenge Icon">
+        <div class="challenge-info">
+          <span class="challenge-name">{{challenge.name}}</span>
+          <span class="challenge-points">{{challenge.points}} points</span>
+        </div>
+      </li>
+    </ul>
+    <button onclick="goTo('leaderboard')">Go to Leaderboard</button>
+  </div>
+
+  <script>
+    angular.module('gamificationApp', [])
+      .controller('ChallengesController', function($scope) {
+        $scope.challenges = [
+          {
+            name: 'Buy a Burger',
+            points: 300,
+            icon: 'burger_icon.png' // adicione seu ícone aqui
+          },
+          {
+            name: 'Invite Friends',
+            points: 200,
+            icon: 'smile_icon.png'
+          },
+          {
+            name: 'Share on Social Media',
+            points: 200,
+            icon: 'share_burger.png'
+          }
+        ];
+      });
+
+    function goTo(page) {
+      window.location.href = page + '.html';
+    }
+  </script>
+</body>
+</html>
