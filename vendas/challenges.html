@@ -8,32 +8,32 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #ffa94d;
+      background-color: #0f1e3c; /* fundo da tela */
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      color: #5c1d00;
+      color: white;
     }
 
     .container {
       width: 90%;
       max-width: 360px;
-      background-color: #d1580f;
+      background-color: #13294b; /* azul principal da caixa */
       border-radius: 28px;
       padding: 32px 24px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     }
 
     h2 {
       text-align: center;
       font-size: 22px;
-      color: #fff;
+      color: #ffffff;
       margin-bottom: 24px;
     }
 
     .challenge-card {
-      background-color: #ff9b42;
+      background-color: #1e3557; /* fundo dos cards */
       border-radius: 20px;
       margin-bottom: 16px;
       padding: 16px;
@@ -47,6 +47,7 @@
       height: 50px;
       border-radius: 10px;
       object-fit: cover;
+      background-color: #264a6e;
     }
 
     .challenge-info {
@@ -56,16 +57,18 @@
     .challenge-title {
       font-size: 16px;
       font-weight: bold;
+      color: #ffffff;
     }
 
     .challenge-points {
       font-size: 14px;
-      color: #fff;
+      color: #fbb03b; /* pontos em amarelo */
+      margin-top: 4px;
     }
 
     .message {
       text-align: center;
-      color: #fff;
+      color: #a0e0ff;
       margin-top: 20px;
       font-size: 14px;
     }
@@ -76,13 +79,29 @@
       padding: 12px;
       font-size: 16px;
       font-weight: bold;
-      background-color: #ff851b;
+      background-color: #f77e2e;
       border: none;
       border-radius: 14px;
       color: white;
       cursor: pointer;
     }
   </style>
+
+<script>
+  function goTo(page) {
+    window.location.href = page + '.html';
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'login.html';
+  }
+
+  function getLoggedUser() {
+    return JSON.parse(localStorage.getItem('loggedUser') || '{}');
+  }
+</script>
+
 </head>
 <body ng-controller="ChallengeController">
   <div class="container">
@@ -130,7 +149,6 @@
           );
         };
 
-        // Carregar assim que abrir
         $scope.loadChallenges();
       });
   </script>

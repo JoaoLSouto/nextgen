@@ -2,7 +2,7 @@
 <html lang="en" ng-app="gamificationApp">
 <head>
   <meta charset="UTF-8">
-  <title>Leaderboard</title>
+  <title>Leaderboards Dinâmicos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -16,7 +16,7 @@
       min-height: 100vh;
     }
 
-    .leaderboard-container {
+    .container {
       width: 90%;
       max-width: 360px;
       background-color: #13294b;
@@ -27,8 +27,18 @@
 
     h2 {
       text-align: center;
+      margin-bottom: 16px;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
       margin-bottom: 20px;
-      font-size: 22px;
+      border-radius: 10px;
+      border: none;
+      background-color: #1e3557;
+      color: white;
     }
 
     ol {
@@ -42,17 +52,17 @@
       align-items: center;
       background-color: #1e3557;
       border-radius: 16px;
-      margin-bottom: 14px;
-      padding: 10px 12px;
+      margin-bottom: 12px;
+      padding: 10px;
     }
 
     .avatar {
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background-color: #35a6e6;
       object-fit: cover;
       margin-right: 12px;
+      background-color: #2a5a7d;
     }
 
     .player-name {
@@ -62,27 +72,15 @@
     }
 
     .player-points {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: bold;
-      color: #35c6f3;
+      color: #fbb03b;
     }
 
     .player-rank {
-      font-size: 16px;
-      font-weight: bold;
-      margin-left: 12px;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 16px;
-      font-weight: bold;
-      background-color: #f77e2e;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
+      font-size: 14px;
+      color: #a0e0ff;
+      margin-left: 10px;
     }
 
     .message {
@@ -92,63 +90,90 @@
       color: #a0e0ff;
     }
   </style>
+
+<script>
+  function goTo(page) {
+    window.location.href = page + '.html';
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'login.html';
+  }
+
+  function getLoggedUser() {
+    return JSON.parse(localStorage.getItem('loggedUser') || '{}');
+  }
+</script>
+
 </head>
 <body ng-controller="LeaderboardController">
-  <div class="leaderboard-container">
-    <h2>Leaderboard</h2>
+  <div class="container">
+    <h2>Escolha um Leaderboard</h2>
+
+    <select ng-model="selectedLeaderboard" ng-options="lb._id as lb.title for lb in leaderboards" ng-change="loadPlayers(selectedLeaderboard)">
+      <option value="">Selecione um leaderboard</option>
+    </select>
+
     <ol>
-      <li ng-repeat="player in leaderboard track by $index">
+      <li ng-repeat="player in players track by $index">
         <img class="avatar" ng-src="{{player.image?.small?.url || 'default_avatar.png'}}" alt="{{player.name}} Avatar">
         <span class="player-name">{{player.name}}</span>
-        <span class="player-points">{{player.score}}</span>
+        <span class="player-points">{{player.score}} pts</span>
         <span class="player-rank">{{$index + 1}}</span>
       </li>
     </ol>
-    <button onclick="goTo('login')">Back to Login</button>
-    <button ng-click="loadLeaderboard()">Recarregar</button>
+
     <div class="message">{{message}}</div>
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
   <script>
     angular.module('gamificationApp', [])
-      .controller('LeaderboardController', function($scope, $http) {
-        $scope.leaderboard = [];
-        $scope.message = "";
+      .controller('LeaderboardController', function ($scope, $http) {
+        $scope.leaderboards = [];
+        $scope.players = [];
+        $scope.selectedLeaderboard = '';
+        $scope.message = 'Carregando leaderboards...';
 
-        $scope.loadLeaderboard = function () {
-          const req = {
-            method: 'GET',
-            url: 'https://service2.funifier.com/v3/leaderboard/best_players',
-            headers: {
-              "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsImNhbGciOiJHWklQIn0.H4sIAAAAAAAAAD3LzQoCIRSG4VsJ1y5q_DnSPghm2QXESY8gSIo61RDde4eC2X08fO9bYE0zreIoLEQyAfaTmiCCjgqVAeWtkKL7UokvjTBcMWe5e7Y06D8DZdo2DrxhJ27Q-7LcB1eny3r2j8a2dGobFIaEfDiA1k4r54wU9Ko_MEzWmc8X1yn2GKAAAAA.sURh-OuQTpuWNHLRmv51Khtr43xiMzzmrlKzVF7ou0H1CiTL8o4kkXTmt1yik7H2yxs3hQyNRVsKNw6BLMUDzQ",
-              "Content-Type": "application/json"
-            }
-          };
-
-          $http(req).then(
-            function (response) {
-              if (response.data && response.data.players) {
-                $scope.leaderboard = response.data.players;
-                $scope.message = "✅ Ranking carregado com sucesso.";
-              } else {
-                $scope.message = "⚠️ Nenhum dado retornado.";
-              }
-              console.log("Leaderboard:", response.data);
-            },
-            function (err) {
-              console.error("Erro ao carregar leaderboard:", err);
-              $scope.message = "❌ Erro ao carregar leaderboard.";
-            }
-          );
+        const headers = {
+          "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsImNhbGciOiJHWklQIn0.H4sIAAAAAAAAAD3LzQoCIRSG4VsJ1y5q_DnSPghm2QXESY8gSIo61RDde4eC2X08fO9bYE0zreIoLEQyAfaTmiCCjgqVAeWtkKL7UokvjTBcMWe5e7Y06D8DZdo2DrxhJ27Q-7LcB1eny3r2j8a2dGobFIaEfDiA1k4r54wU9Ko_MEzWmc8X1yn2GKAAAAA.sURh-OuQTpuWNHLRmv51Khtr43xiMzzmrlKzVF7ou0H1CiTL8o4kkXTmt1yik7H2yxs3hQyNRVsKNw6BLMUDzQ",
+          "Content-Type": "application/json"
         };
 
-        $scope.loadLeaderboard();
-      });
+        // 1. Carrega a lista de leaderboards
+        $http({
+          method: 'GET',
+          url: 'https://service2.funifier.com/v3/leaderboard',
+          headers: headers
+        }).then(function (res) {
+          $scope.leaderboards = res.data;
+          $scope.message = "Selecione um leaderboard.";
+        }, function (err) {
+          console.error("Erro ao carregar leaderboards", err);
+          $scope.message = "Erro ao carregar leaderboards.";
+        });
 
-    function goTo(page) {
-      window.location.href = page + '.html';
-    }
+        // 2. Carrega os jogadores do leaderboard selecionado
+        $scope.loadPlayers = function (leaderboardId) {
+          if (!leaderboardId) return;
+
+          $scope.players = [];
+          $scope.message = "Carregando jogadores...";
+
+          $http({
+            method: 'GET',
+            url: `https://service2.funifier.com/v3/leaderboard/${leaderboardId}`,
+            headers: headers
+          }).then(function (res) {
+            $scope.players = res.data.players || [];
+            $scope.message = $scope.players.length ? "✅ Jogadores carregados." : "⚠️ Sem jogadores neste ranking.";
+          }, function (err) {
+            console.error("Erro ao carregar jogadores:", err);
+            $scope.message = "❌ Erro ao carregar jogadores.";
+          });
+        };
+      });
   </script>
 </body>
 </html>
