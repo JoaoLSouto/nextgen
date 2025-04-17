@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="gamificationApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Leaderboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2eee9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .leaderboard-container {
+      width: 90%;
+      max-width: 360px;
+      background-color: #0c3b2e;
+      border-radius: 28px;
+      padding: 32px 24px;
+      color: #fff;
+      position: relative;
+    }
+
+    .back-arrow {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 24px;
+      color: #e6e6e6;
+      cursor: pointer;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 28px;
+    }
+
+    ol {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      background-color: #114837;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      padding: 12px 16px;
+    }
+
+    .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 14px;
+    }
+
+    .player-info {
+      flex: 1;
+    }
+
+    .player-name {
+      font-size: 16px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .player-score {
+      font-size: 14px;
+      color: #cccccc;
+    }
+
+    .player-rank {
+      font-size: 20px;
+      font-weight: bold;
+      color: #f2efe6;
+    }
+
+    button {
+      margin-top: 24px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      background-color: #eae5dc;
+      border: none;
+      border-radius: 14px;
+      color: #0c3b2e;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body ng-controller="LeaderboardController">
+  <div class="leaderboard-container">
+    <div class="back-arrow" onclick="goTo('login')">&#8592;</div>
+    <h2>Leaderboard</h2>
+    <ol>
+      <li ng-repeat="player in leaderboard track by $index">
+        <img class="avatar" ng-src="{{player.avatar}}" alt="{{player.name}} Avatar">
+        <div class="player-info">
+          <div class="player-name">{{player.name}}</div>
+          <div class="player-score">{{player.points | number}} </div>
+        </div>
+        <div class="player-rank">{{$index + 1}}</div>
+      </li>
+    </ol>
+    <button onclick="goTo('login')">Back to Login</button>
+  </div>
+
+  <script>
+    angular.module('gamificationApp', []).controller('LeaderboardController', function($scope) {
+      $scope.leaderboard = [
+        { name: 'John Doe', avatar: 'john.png', points: 15200 },
+        { name: 'David Smith', avatar: 'david.png', points: 12300 },
+        { name: 'James Brown', avatar: 'james.png', points: 10850 },
+        { name: 'Robert Wiison', avatar: 'robert.png', points: 9600 }
+      ];
+    });
+
+    function goTo(page) {
+      window.location.href = page + '.html';
+    }
+  </script>
+</body>
+</html>

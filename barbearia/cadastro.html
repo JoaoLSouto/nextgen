@@ -2,63 +2,72 @@
 <html lang="en" ng-app="gamificationApp">
 <head>
   <meta charset="UTF-8">
-  <title>Cadastro</title>
+  <title>Cadastro - Inova Barbearia</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
   <style>
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
+      padding: 0;
+    }
+
+    body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #0f1e3c;
+      background-color: #0c3b2e;
+      color: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      color: white;
     }
 
     .signup-card {
-      background-color: #13294b;
-      border-radius: 24px;
-      padding: 24px;
+      background-color: #0c3b2e;
+      border-radius: 28px;
+      padding: 32px 24px;
       width: 90%;
       max-width: 360px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      text-align: center;
     }
 
     .signup-card h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #fbb03b;
+      font-size: 22px;
+      margin-bottom: 24px;
     }
 
-    input, select {
+    input {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
       border: none;
-      border-radius: 10px;
-      background-color: #1e3557;
-      color: white;
-      font-size: 14px;
+      border-radius: 12px;
+      background-color: #114837;
+      color: #ffffff;
+      font-size: 16px;
+    }
+
+    input::placeholder {
+      color: #b9d4c6;
     }
 
     button {
       width: 100%;
-      padding: 12px;
-      background-color: #f77e2e;
+      padding: 14px;
+      background-color: #f2eee9;
       border: none;
-      border-radius: 14px;
+      border-radius: 28px;
       font-weight: bold;
       font-size: 16px;
-      color: white;
+      color: #0c3b2e;
       cursor: pointer;
       margin-top: 10px;
     }
 
     .success-message, .error-message {
-      text-align: center;
-      margin-top: 12px;
+      margin-top: 16px;
+      font-size: 14px;
       font-weight: bold;
     }
 
@@ -70,22 +79,6 @@
       color: #ff5e5e;
     }
   </style>
-
-<script>
-  function goTo(page) {
-    window.location.href = page + '.html';
-  }
-
-  function logout() {
-    localStorage.clear();
-    window.location.href = 'login.html';
-  }
-
-  function getLoggedUser() {
-    return JSON.parse(localStorage.getItem('loggedUser') || '{}');
-  }
-</script>
-
 
   <script>
     var app = angular.module('gamificationApp', []);
@@ -147,7 +140,7 @@
 </head>
 <body ng-controller="SignupController">
   <div class="signup-card">
-    <h2>Cadastre-se</h2>
+    <h2>Cadastro</h2>
     <input type="text" ng-model="user.name" placeholder="Nome completo" required>
     <input type="email" ng-model="user.email" placeholder="Email" required>
     <input type="text" ng-model="user.country" placeholder="País">

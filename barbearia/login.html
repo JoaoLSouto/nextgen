@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="gamificationApp">
+<head>
+  <meta charset="UTF-8">
+  <title>INOVA Barbearia - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5efe6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-card {
+      width: 90%;
+      max-width: 360px;
+      background-color: #0c3b2e;
+      border-radius: 28px;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .login-header img {
+      width: 80px;
+      margin-bottom: 16px;
+    }
+
+    .login-header h1 {
+      color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .login-header h2 {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 400;
+      margin-bottom: 28px;
+    }
+
+    .login-content input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 14px;
+      border: none;
+      border-radius: 12px;
+      background-color: #144c3c;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .login-content input::placeholder {
+      color: #b9d4c6;
+    }
+
+    .login-content button {
+      width: 100%;
+      padding: 14px;
+      background-color: #f5efe6;
+      color: #0c3b2e;
+      font-weight: bold;
+      border: none;
+      font-size: 16px;
+      border-radius: 28px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .login-content p {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #e6e6e6;
+    }
+
+    .login-content a {
+      color: #fefefe;
+      font-weight: bold;
+      text-decoration: none;
+    }
+  </style>
+
+  <script>
+    var app = angular.module('gamificationApp', []);
+
+    app.controller('LoginController', function ($scope, $http) {
+      $scope.email = '';
+      $scope.password = '';
+
+      $scope.login = function () {
+        const req = {
+          method: 'GET',
+          url: 'https://service2.funifier.com/v3/player',
+          headers: {
+            "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsImNhbGciOiJHWklQIn0.H4sIAAAAAAAAAD2LwQpCIRBFfyVm7aKnjkb7IGjZB8SkIwiSor7qEf17VvA2l8Ph3BdQiSdeYA_GBkZvt1JJG6wOihRa5QwIaC4XHkll8hdKSWweNXb-o-fEK1OnKzUeH3Iuz7c-XofzcnT3OtzcuK4iDxFpBJPVejdJgyiAn-UnUH8H3x_3USOBoAAAAA.dUPw58OjZeGyDZ7AER9Bx0Vp09aCjhC1QyFMiP9m0gumazJSAWpWG8oz0UB98Jl9b_phqvINjKggsTMTnJUXkw",
+            "Content-Type": "application/json"
+          }
+        };
+
+        $http(req).then(
+          function (response) {
+            const players = response.data || [];
+            const found = players.find(p => (p.email || '').toLowerCase() === $scope.email.toLowerCase());
+
+            if (found) {
+              alert("✅ Login realizado com sucesso!");
+              console.log("Usuário encontrado:", found);
+            } else {
+              alert("❌ Usuário não encontrado.");
+            }
+          },
+          function (error) {
+            console.error('Erro ao consultar jogadores:', error);
+            alert("Erro ao buscar jogadores.");
+          }
+        );
+      };
+    });
+  </script>
+</head>
+<body ng-controller="LoginController">
+  <div class="login-card">
+    <div class="login-header">
+      <img src="logo_inova.png" alt="INOVA Logo"> <!-- substitua pela sua logo -->
+      <h1>Log in to</h1>
+      <h2>your account</h2>
+    </div>
+    <div class="login-content">
+      <input type="email" ng-model="email" placeholder="Email">
+      <input type="password" ng-model="password" placeholder="Password">
+      <button ng-click="login()">LOG IN</button>
+      <p>Don’t have an account? <a href="#">Sign up</a></p>
+    </div>
+  </div>
+</body>
+</html>

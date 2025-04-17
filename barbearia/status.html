@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="gamificationApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Player Stats - Barbearia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2eee9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .stats-container {
+      width: 90%;
+      max-width: 360px;
+      background-color: #0c3b2e;
+      border-radius: 28px;
+      padding: 32px 24px;
+      text-align: center;
+      color: #ffffff;
+      position: relative;
+    }
+
+    .back-arrow {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 24px;
+      color: #d4d4d4;
+      cursor: pointer;
+    }
+
+    .avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 24px auto 16px;
+      border: 4px solid #f2eee9;
+    }
+
+    .player-name {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .points {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: #e8f0e8;
+    }
+
+    .level-label {
+      font-size: 14px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      color: #eae5dc;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 14px;
+      background-color: #205546;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: #eae5dc;
+      width: {{player.progress}}%;
+    }
+
+    .semicircle-progress {
+      position: relative;
+      width: 100px;
+      height: 50px;
+      border-top-left-radius: 100px;
+      border-top-right-radius: 100px;
+      background-color: #205546;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .semicircle-fill {
+      position: absolute;
+      height: 100%;
+      background-color: #eae5dc;
+      left: 0;
+      width: {{player.progress}}%;
+    }
+
+    .progress-percent {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+
+    .progress-label {
+      font-size: 14px;
+      color: #cfcfcf;
+    }
+  </style>
+</head>
+<body ng-controller="StatsController">
+  <div class="stats-container">
+    <div class="back-arrow" onclick="goTo('leaderboard')">&#8592;</div>
+
+    <img class="avatar" ng-src="{{player.avatar}}" alt="Avatar do Jogador">
+    <div class="player-name">{{player.name}}</div>
+    <div class="points">{{player.points}} <span style="font-weight: normal;">POINTS</span></div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: {{player.progress}}%;"></div>
+    </div>
+
+    <div class="level-label">{{player.rankTitle}}</div>
+
+    <div class="semicircle-progress">
+      <div class="semicircle-fill" style="width: {{player.progress}}%;"></div>
+    </div>
+
+    <div class="progress-percent">{{player.progress}}%</div>
+    <div class="progress-label">To next level</div>
+  </div>
+
+  <script>
+    angular.module('gamificationApp', [])
+      .controller('StatsController', function($scope) {
+        $scope.player = {
+          name: "David Smith",
+          points: 12300,
+          level: 5,
+          progress: 60,
+          rankTitle: "Bearded Virtuoso",
+          avatar: "david_smith.png" // Substitua com sua imagem real
+        };
+      });
+
+    function goTo(page) {
+      window.location.href = page + ".html";
+    }
+  </script>
+</body>
+</html>
