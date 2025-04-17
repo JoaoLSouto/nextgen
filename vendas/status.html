@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="gamificationApp">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Player Stats</title>
+  <title>Status do Jogador</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -13,12 +13,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
     }
 
     .stats-container {
       width: 90%;
-      max-width: 320px;
+      max-width: 380px;
       background-color: #13294b;
       border-radius: 24px;
       padding: 24px;
@@ -26,123 +26,87 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
 
-    h2 {
-      font-size: 20px;
-      margin-bottom: 16px;
-    }
-
     .avatar {
-      background-image: url('avatars/john.png');
-      background-size: cover;
-      background-position: center;
       width: 96px;
       height: 96px;
       border-radius: 50%;
-      margin: 0 auto 12px;
-      border: 8px solid #fbb03b;
+      object-fit: cover;
+      border: 6px solid #fbb03b;
+      margin-bottom: 16px;
     }
 
-    h3 {
-      font-size: 20px;
-      margin: 4px 0;
+    h2 {
+      font-size: 22px;
+      margin-bottom: 8px;
     }
 
-    .points {
-      font-size: 24px;
+    .info p {
+      margin: 6px 0;
+      font-size: 15px;
+      text-align: left;
+    }
+
+    .highlight {
       font-weight: bold;
       color: #a0e0ff;
-      margin-bottom: 16px;
     }
 
     .progress-bar {
       background-color: #1f3c63;
       height: 14px;
       border-radius: 10px;
-      margin: 10px 0;
+      margin: 16px 0;
       overflow: hidden;
     }
 
     .progress-fill {
       height: 100%;
       background-color: #3ddc91;
-      width: 60%; /* pode usar {{player.progress}}% com Angular */
+      width: 100%;
     }
 
-    .level {
-      font-size: 18px;
-      font-weight: bold;
-      margin: 16px 0 8px;
-    }
-
-    .semicircle-progress {
-      position: relative;
-      width: 100px;
-      height: 50px;
-      background: #1f3c63;
-      border-top-left-radius: 100px;
-      border-top-right-radius: 100px;
-      overflow: hidden;
-      margin: 0 auto;
-    }
-
-    .semicircle-fill {
-      position: absolute;
-      width: 60%;
-      height: 100%;
-      background: #3ddc91;
-    }
-
-    .semicircle-block {
-      position: absolute;
-      width: 10%;
-      height: 100%;
-      left: 60%;
-      background: #fbb03b;
-    }
-
-    .percent {
-      font-size: 20px;
-      font-weight: bold;
-      margin-top: 8px;
-    }
-
-    button {
-      margin-top: 20px;
-      padding: 10px 16px;
-      border: none;
-      background-color: #f77e2e;
-      color: white;
-      border-radius: 12px;
+    .label {
       font-size: 14px;
-      cursor: pointer;
+      color: #ccc;
+      margin-top: 6px;
+    }
+
+    h3 {
+      font-size: 18px;
+      margin-top: 24px;
+      margin-bottom: 10px;
+      color: #fbb03b;
     }
   </style>
 </head>
-<body ng-controller="StatsController">
+<body>
   <div class="stats-container">
-    <h2>Player stats</h2>
-    <div class="avatar"></div>
-    <h3>{{player.name}}</h3>
-    <p class="points">{{player.points}} points</p>
+    <img class="avatar" src="https://my.funifier.com/images/funny.png" alt="Avatar">
+    <h2>Jerry</h2>
 
+    <div class="info">
+      <p><span class="highlight">País:</span> USA</p>
+      <p><span class="highlight">Empresa:</span> Tom & Jerry Inc.</p>
+      <p><span class="highlight">Times:</span> cartoon</p>
+      <p><span class="highlight">Esportes:</span> soccer, cycling, surf</p>
+      <p><span class="highlight">Amigos:</span> 3</p>
+      <p><span class="highlight">Desafios Concluídos:</span> 0</p>
+      <p><span class="highlight">Pontos Totais:</span> 300</p>
+      <p><span class="highlight">Nível Atual:</span> level alto</p>
+    </div>
+
+    <div class="label">Progresso de Nível</div>
     <div class="progress-bar">
-      <div class="progress-fill" style="width: {{player.progress}}%"></div>
+      <div class="progress-fill" style="width: 100%;"></div>
     </div>
+    <p class="highlight">100%</p>
 
-    <p class="level">Level {{player.level}}</p>
-
-    <div class="semicircle-progress">
-      <div class="semicircle-fill" style="width: {{player.progress}}%"></div>
-      <div class="semicircle-block"></div>
+    <h3>Conquistas</h3>
+    <div class="info">
+      <p><span class="highlight">Total de Pontos (ganhos via ações):</span> 120</p>
+      <p><span class="highlight">Badges Recebidas:</span> 2</p>
+      <p><span class="highlight">Níveis Alcançados:</span> 1</p>
     </div>
-
-    <p class="percent">{{player.progress}}%</p>
-
-    <button onclick="goTo('challenges')">Go to Challenges</button>
   </div>
-
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-  <script src="app.js"></script>
-  <script src="prototype_navigation.js"></script>
 </body>
 </html>

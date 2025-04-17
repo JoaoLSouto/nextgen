@@ -2,110 +2,137 @@
 <html lang="en" ng-app="gamificationApp">
 <head>
   <meta charset="UTF-8">
-  <title>Leaderboard</title>
+  <title>Desafios Ativos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #0f1e3c;
-      color: white;
+      background-color: #ffa94d;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      color: #5c1d00;
     }
 
-    .leaderboard-container {
+    .container {
       width: 90%;
-      max-width: 320px;
-      background-color: #13294b;
-      border-radius: 24px;
-      padding: 24px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      max-width: 360px;
+      background-color: #d1580f;
+      border-radius: 28px;
+      padding: 32px 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 20px;
       font-size: 22px;
+      color: #fff;
+      margin-bottom: 24px;
     }
 
-    ol {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    li {
+    .challenge-card {
+      background-color: #ff9b42;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      padding: 16px;
       display: flex;
       align-items: center;
-      background-color: #1e3557;
-      border-radius: 16px;
-      margin-bottom: 14px;
-      padding: 10px 12px;
+      gap: 12px;
     }
 
-    .avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background-color: #35a6e6;
+    .challenge-card img {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
       object-fit: cover;
-      margin-right: 12px;
     }
 
-    .player-name {
-      font-size: 16px;
-      font-weight: bold;
+    .challenge-info {
       flex: 1;
     }
 
-    .player-points {
-      font-size: 15px;
-      font-weight: bold;
-      color: #35c6f3; /* pode variar conforme pontuação */
-    }
-
-    .player-points.orange {
-      color: #fbb03b;
-    }
-
-    .player-rank {
+    .challenge-title {
       font-size: 16px;
       font-weight: bold;
-      margin-left: 12px;
+    }
+
+    .challenge-points {
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .message {
+      text-align: center;
+      color: #fff;
+      margin-top: 20px;
+      font-size: 14px;
     }
 
     button {
+      margin-top: 20px;
       width: 100%;
-      padding: 10px;
-      margin-top: 16px;
+      padding: 12px;
+      font-size: 16px;
       font-weight: bold;
-      background-color: #f77e2e;
-      color: white;
+      background-color: #ff851b;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
+      color: white;
       cursor: pointer;
     }
   </style>
 </head>
-<body ng-controller="LeaderboardController">
-  <div class="leaderboard-container">
-    <h2>Leaderboard</h2>
-    <ol>
-      <li ng-repeat="player in leaderboard track by $index">
-        <img class="avatar" ng-src="{{player.avatar}}" alt="{{player.name}} Avatar">
-        <span class="player-name">{{player.name}}</span>
-        <span class="player-points" ng-class="{'orange': player.name === 'John'}">{{player.points}}</span>
-        <span class="player-rank">{{$index + 1}}</span>
-      </li>
-    </ol>
-    <button onclick="goTo('login')">Back to Login</button>
+<body ng-controller="ChallengeController">
+  <div class="container">
+    <h2>Desafios Ativos</h2>
+
+    <div class="challenge-card" ng-repeat="c in challenges">
+      <img ng-src="{{c.badgeUrl || 'default_badge.png'}}" alt="Badge">
+      <div class="challenge-info">
+        <div class="challenge-title">{{c.challenge}}</div>
+        <div class="challenge-points">{{c.points[0].total || 0}} pontos</div>
+      </div>
+    </div>
+
+    <button ng-click="loadChallenges()">Recarregar Desafios</button>
+    <div class="message">{{message}}</div>
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-  <script src="app.js"></script>
-  <script src="prototype_navigation.js"></script>
+  <script>
+    angular.module('gamificationApp', [])
+      .controller('ChallengeController', function($scope, $http) {
+        $scope.challenges = [];
+        $scope.message = '';
+
+        $scope.loadChallenges = function() {
+          const req = {
+            method: 'GET',
+            url: 'https://service2.funifier.com/v3/challenge',
+            headers: {
+              "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsImNhbGciOiJHWklQIn0.H4sIAAAAAAAAAD3LzQoCIRSG4VsJ1y5q_DnSPghm2QXESY8gSIo61RDde4eC2X08fO9bYE0zreIoLEQyAfaTmiCCjgqVAeWtkKL7UokvjTBcMWe5e7Y06D8DZdo2DrxhJ27Q-7LcB1eny3r2j8a2dGobFIaEfDiA1k4r54wU9Ko_MEzWmc8X1yn2GKAAAAA.sURh-OuQTpuWNHLRmv51Khtr43xiMzzmrlKzVF7ou0H1CiTL8o4kkXTmt1yik7H2yxs3hQyNRVsKNw6BLMUDzQ",
+              "Content-Type": "application/json"
+            }
+          };
+
+          $http(req).then(
+            function(response) {
+              console.log("Desafios:", response.data);
+              $scope.challenges = response.data;
+              $scope.message = "✅ Desafios carregados com sucesso!";
+            },
+            function(error) {
+              console.error("Erro ao carregar desafios:", error);
+              $scope.message = "❌ Erro ao carregar desafios.";
+            }
+          );
+        };
+
+        // Carregar assim que abrir
+        $scope.loadChallenges();
+      });
+  </script>
 </body>
 </html>

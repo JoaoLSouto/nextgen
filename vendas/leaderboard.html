@@ -18,7 +18,7 @@
 
     .leaderboard-container {
       width: 90%;
-      max-width: 320px;
+      max-width: 360px;
       background-color: #13294b;
       border-radius: 24px;
       padding: 24px;
@@ -64,11 +64,7 @@
     .player-points {
       font-size: 15px;
       font-weight: bold;
-      color: #35c6f3; /* pode variar conforme pontuação */
-    }
-
-    .player-points.orange {
-      color: #fbb03b;
+      color: #35c6f3;
     }
 
     .player-rank {
@@ -88,6 +84,13 @@
       border-radius: 12px;
       cursor: pointer;
     }
+
+    .message {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 14px;
+      color: #a0e0ff;
+    }
   </style>
 </head>
 <body ng-controller="LeaderboardController">
@@ -95,17 +98,57 @@
     <h2>Leaderboard</h2>
     <ol>
       <li ng-repeat="player in leaderboard track by $index">
-        <img class="avatar" ng-src="{{player.avatar}}" alt="{{player.name}} Avatar">
+        <img class="avatar" ng-src="{{player.image?.small?.url || 'default_avatar.png'}}" alt="{{player.name}} Avatar">
         <span class="player-name">{{player.name}}</span>
-        <span class="player-points" ng-class="{'orange': player.name === 'John'}">{{player.points}}</span>
+        <span class="player-points">{{player.score}}</span>
         <span class="player-rank">{{$index + 1}}</span>
       </li>
     </ol>
     <button onclick="goTo('login')">Back to Login</button>
+    <button ng-click="loadLeaderboard()">Recarregar</button>
+    <div class="message">{{message}}</div>
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-  <script src="app.js"></script>
-  <script src="prototype_navigation.js"></script>
+  <script>
+    angular.module('gamificationApp', [])
+      .controller('LeaderboardController', function($scope, $http) {
+        $scope.leaderboard = [];
+        $scope.message = "";
+
+        $scope.loadLeaderboard = function () {
+          const req = {
+            method: 'GET',
+            url: 'https://service2.funifier.com/v3/leaderboard/best_players',
+            headers: {
+              "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsImNhbGciOiJHWklQIn0.H4sIAAAAAAAAAD3LzQoCIRSG4VsJ1y5q_DnSPghm2QXESY8gSIo61RDde4eC2X08fO9bYE0zreIoLEQyAfaTmiCCjgqVAeWtkKL7UokvjTBcMWe5e7Y06D8DZdo2DrxhJ27Q-7LcB1eny3r2j8a2dGobFIaEfDiA1k4r54wU9Ko_MEzWmc8X1yn2GKAAAAA.sURh-OuQTpuWNHLRmv51Khtr43xiMzzmrlKzVF7ou0H1CiTL8o4kkXTmt1yik7H2yxs3hQyNRVsKNw6BLMUDzQ",
+              "Content-Type": "application/json"
+            }
+          };
+
+          $http(req).then(
+            function (response) {
+              if (response.data && response.data.players) {
+                $scope.leaderboard = response.data.players;
+                $scope.message = "✅ Ranking carregado com sucesso.";
+              } else {
+                $scope.message = "⚠️ Nenhum dado retornado.";
+              }
+              console.log("Leaderboard:", response.data);
+            },
+            function (err) {
+              console.error("Erro ao carregar leaderboard:", err);
+              $scope.message = "❌ Erro ao carregar leaderboard.";
+            }
+          );
+        };
+
+        $scope.loadLeaderboard();
+      });
+
+    function goTo(page) {
+      window.location.href = page + '.html';
+    }
+  </script>
 </body>
 </html>
