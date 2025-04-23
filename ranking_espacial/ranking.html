@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR" ng-app="RankingApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Ranking Espacial</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #fff;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+    }
+    th {
+      background-color: #007BFF;
+      color: white;
+    }
+  </style>
+</head>
+<body ng-controller="RankingController">
+
+  <h1>🚀 Ranking Espacial</h1>
+
+  <table>
+    <tr>
+      <th>#</th>
+      <th>Nome</th>
+      <th>Pontuação Total</th>
+    </tr>
+    <tr ng-repeat="jogador in ranking">
+      <td>{{$index + 1}}</td>
+      <td>{{jogador.name}}</td>
+      <td id="pontos">{{jogador.total_points}}</td>
+    </tr>
+  </table>
+
+  <script>
+    angular.module('RankingApp', [])
+      .controller('RankingController', function($scope, $http, $q) {
+        const token = "Bearer eyJhbGciOiJIUzUxMiIsImNhbGciOiJHWklQIn0.H4sIAAAAAAAAAD2LwQoCIRQAfyU8e3B9rmb3IOjYB8RLnyBIirrVEv17UrC3YZh5MyzxTCs7ML0XFsQ0S5AmGBUAQQfrPOOsuVxoJJXQXzElvnvW2OmPnhJtjB1v2Gg86Fxe7n1cx8t6co863NKobiIPEXEEk1GzAjlbyxm9yk9oAQas_XwBdBhptaAAAAA.jMTKIXYgdeanCBq5mrAqnXvCLMWEu_Cm06wmWaRkARTVe55zMumke915YgshUrWo5dw1jUU9AhTrwEH28VF_Jg";
+
+        $scope.ranking = [];
+
+        $http({
+          method: 'POST',
+          url: 'https://service2.funifier.com/v3/leaderboard/ETnG3nt/leader/aggregate?period=&live=true',
+          headers: {
+            "Authorization": token,
+            "Content-Type": "application/json"
+          },
+          data: []
+        }).then(function(response) {
+          const jogadores = response.data;
+
+          const promessas = jogadores.map(function(jogador) {
+            const playerIdLimpo = jogador._id.split("_")[0]; // remove sufixo como "_ETnRIZM"
+
+            return $http({
+              method: 'GET',
+              url: `https://service2.funifier.com/v3/player/${playerIdLimpo}/status`,
+              headers: {
+                "Authorization": token
+              }
+            }).then(function(res) {
+              const dados = res.data;
+              console.log("Status do jogador:", dados);
+
+              if (dados && dados.pointCategories && dados.pointCategories.hasOwnProperty("pontos")) {
+                jogador.total_points = dados.pointCategories["pontos"];
+              } else {
+                jogador.total_points = 0;
+              }
+
+              return jogador;
+            }).catch(function(err) {
+              console.warn(`Erro ao buscar status do jogador ${jogador.name}:`, err);
+              jogador.total_points = 0;
+              return jogador;
+            });
+          });
+
+          $q.all(promessas).then(function(jogadoresComPontuacao) {
+            $scope.ranking = jogadoresComPontuacao;
+          });
+        }).catch(function(error) {
+          console.error('Erro ao carregar o ranking:', error);
+        });
+      });
+  </script>
+</body>
+</html>
