@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyberpunk Venda</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: url('6272395.gif') no-repeat center center fixed;
+      background-size: cover;
+      color: #00ffe7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      padding: 40px;
+    }
+    h1 {
+      font-size: 2em;
+      text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
+      margin-bottom: 30px;
+      color: #F29100;
+    }
+    form {
+      background: rgba(0, 0, 0, 0.6);
+      border: 2px solid #0ff;
+      border-radius: 20px;
+      padding: 30px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 20px #0ff;
+    }
+    input, select {
+      background: #111;
+      color: #0ff;
+      border: 2px solid #0ff;
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 15px;
+      margin-bottom: 20px;
+      width: 100%;
+      font-size: 1em;
+      box-shadow: 0 0 10px #0ff44d;
+    }
+    input:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 15px #ff00ff;
+      border-color: #ff00ff;
+    }
+    button {
+      background: linear-gradient(90deg, #ff00cc, #3333ff);
+      color: white;
+      font-size: 1.1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      width: 100%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px #ff00cc;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #00ffe7, #ff00ff);
+      box-shadow: 0 0 20px #ff00ff;
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #0d0d0d;
+      color: #0ff;
+      padding: 30px;
+      border: 2px solid #ff00ff;
+      box-shadow: 0 0 30px #ff00ff;
+      border-radius: 15px;
+      font-size: 1.3em;
+      text-align: center;
+      z-index: 1000;
+      white-space: pre-line;
+    }
+    .popup img {
+      margin-top: 15px;
+      width: 100px;
+    }
+  </style>
+</head>
+<body>
+
+  <img src="funifier.png" class="logo" alt="Funifier Logo">
+  <h1>💾 REGISTRAR VENDA 💾</h1>
+
+  <form id="vendaForm">
+    <select id="catalogo" required>
+      <option value="catalogo" selected>catalogo</option>
+    </select>
+    <input type="text" id="login" placeholder="ID do Usuário" required />
+    <input type="text" id="produto" placeholder="Nome do Produto" required />
+    <input type="number" id="valor" placeholder="Valor da Venda" required />
+    <button type="submit">REGISTRAR VENDA</button>
+  </form>
+
+  <div class="popup" id="popupRecompensa"></div>
+  <audio id="cashSound" src="song.mp3"></audio>
+
+  <script>
+    const AUTH = 'Bearer eyJhbGciOiJIUzUxMiIsImNhbGciOiJHWklQIn0.H4sIAAAAAAAAAD2LwQoCIRQAfyXe2cO2rj7rHgQd-4B4q08QJEXdaon-PWFhb8Mw8wXK4cYrnEGbAb1zbpQjepy8JKlnbRAEVJsy96QwuQfFKA7vEhpv6DjyztRopsr9IWvT8mz9utzXq32V7pbKZRepi0A9OOKkpFaojAD-5E2ccFDK_P6hlMoQoAAAAA.wj3nDh_YRSfS9Z_-PwCmhuqbUE1Z3-wex_hWwUuEc0wNDOAXVtsaJZqzwtWE28o6MKSp76nc3NjK2YpWJm5efA';
+    const catalogSelect = document.getElementById('catalogo');
+    const form = document.getElementById('vendaForm');
+    const popup = document.getElementById('popupRecompensa');
+    const cashSound = document.getElementById('cashSound');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const userId = document.getElementById('login').value.trim();
+      const product = document.getElementById('produto').value.trim();
+      const price = parseFloat(document.getElementById('valor').value);
+      const catalogId = document.getElementById('catalogo').value;
+
+      try {
+        const actionRes = await fetch("https://service2.funifier.com/v3/action/log?async=false", {
+          method: "POST",
+          headers: {
+            "Authorization": AUTH,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            actionId: "vender",
+            userId: userId,
+            attributes: { produto: product, valor: price }
+          })
+        });
+
+        if (!actionRes.ok) {
+          const errMsg = await actionRes.text();
+          console.error("Erro ao registrar ação:", errMsg);
+          throw new Error("Erro ao registrar ação");
+        }
+
+        const itemRes = await fetch("https://service2.funifier.com/v3/virtualgoods/item", {
+          method: "POST",
+          headers: {
+            "Authorization": AUTH,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            catalogId: catalogId,
+            name: product,
+            description: `Produto registrado por ${userId}`,
+            amount: -Math.abs(price),
+            active: true,
+            created: Date.now(),
+            extra: {},
+            requires: [],
+            rewards: [],
+            notifications: [],
+            i18n: {},
+            techniques: ["GT08"],
+            _id: Math.random().toString(36).substring(2, 10)
+          })
+        });
+
+        if (!itemRes.ok) {
+          const errMsg = await itemRes.text();
+          console.error("Erro ao criar item:", errMsg);
+          throw new Error("Erro ao registrar item");
+        }
+
+        cashSound.play().catch(e => console.warn("Erro ao tocar som:", e));
+        popup.innerHTML = `✅ Produto "${product}" registrado com sucesso!
+🪙 Você ganhou ${price} moedas!
+<img src="https://i.gifer.com/origin/e0/e02ce86bcfd6d1d6c2f775afb3ec8c01_w200.gif" alt="gif" />`;
+        popup.style.display = 'block';
+        setTimeout(() => popup.style.display = 'none', 6000);
+
+      } catch (error) {
+        console.error("Erro:", error);
+        alert("❌ Erro ao registrar venda ou item. Verifique o console para mais detalhes.");
+      }
+    });
+  </script>
+
+</body>
+</html>
